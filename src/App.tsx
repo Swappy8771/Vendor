@@ -1,17 +1,62 @@
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-import './App.css'
+import LoginForm from './features/auth/components/LoginForm';
+import RegisterForm from './features/auth/components/RegisterForm';
 
-function App() {
+// Role-based layouts
+import UserLayout from './layouts/userLayout';
+import SellerLayout from './layouts/sellerLayout';
+import AdminLayout from './layouts/adminLayout';
 
+// Pages
+import UserHome from './pages/Buyer/Home';
+import SellerDashboard from './pages/Seller/Dashboard';
+import AdminDashboard from './pages/Admin/Dashboard';
+
+export default function App() {
   return (
-   <>
-   <div>
-   hi
-         <h1 className="text-3xl font-bold text-blue-600">Tailwind is Working!</h1>
+    <Router>
+      <Routes>
+        {/* 🔁 Default redirect */}
+        <Route path="/" element={<Navigate to="/login" />} />
 
-   </div>
-   </>
-  )
+        {/* 🟢 Auth Routes */}
+        <Route path="/login" element={<LoginForm />} />
+        <Route path="/register" element={<RegisterForm />} />
+
+        {/* 🧑 Buyer/User Layout & Routes */}
+        <Route
+          path="/user/home"
+          element={
+            <UserLayout>
+              <UserHome />
+            </UserLayout>
+          }
+        />
+
+        {/* 🛍️ Seller Layout & Routes */}
+        <Route
+          path="/seller/dashboard"
+          element={
+            <SellerLayout>
+              <SellerDashboard />
+            </SellerLayout>
+          }
+        />
+
+        {/* 🛡️ Admin Layout & Routes */}
+        <Route
+          path="/admin/dashboard"
+          element={
+            <AdminLayout>
+              <AdminDashboard />
+            </AdminLayout>
+          }
+        />
+
+        {/* 🔴 404 fallback */}
+        <Route path="*" element={<div>404 | Page not found</div>} />
+      </Routes>
+    </Router>
+  );
 }
-
-export default App
