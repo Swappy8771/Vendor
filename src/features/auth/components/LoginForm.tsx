@@ -6,7 +6,6 @@ import { loginUser } from '../authSlice';
 export default function LoginForm() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
   const { user, loading, error } = useAppSelector((state) => state.auth);
 
   const [email, setEmail] = useState('');
@@ -17,7 +16,6 @@ export default function LoginForm() {
     dispatch(loginUser({ email, password }));
   };
 
-  // ✅ Redirect based on role
   useEffect(() => {
     if (user?.role === 'user') {
       navigate('/user/home');
@@ -29,30 +27,64 @@ export default function LoginForm() {
   }, [user, navigate]);
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-100 to-white">
+      <div className="w-full max-w-md p-8 bg-white shadow-2xl rounded-2xl">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Welcome Back</h2>
+        <p className="text-center text-gray-500 mb-8">Login to your account</p>
 
-      <label>Email:</label>
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email Address
+            </label>
+            <input
+              type="email"
+              id="email"
+              className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="you@example.com"
+            />
+          </div>
 
-      <label>Password:</label>
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="••••••••"
+            />
+          </div>
 
-      <button type="submit" disabled={loading}>
-        {loading ? 'Logging in...' : 'Login'}
-      </button>
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg text-white font-semibold ${
+              loading ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+            }`}
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-    </form>
+          {error && <p className="text-center text-sm text-red-500">{error}</p>}
+        </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            Don't have an account?{' '}
+            <a href="/register" className="text-blue-600 hover:underline font-medium">
+              Sign up
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 }
