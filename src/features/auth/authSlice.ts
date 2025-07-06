@@ -1,9 +1,8 @@
-// src/features/auth/authSlice.ts
-
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { loginAPI, registerAPI } from './authAPI';
 
 interface User {
+  avatar: string;
   id: string;
   name: string;
   email: string;
@@ -16,6 +15,7 @@ interface AuthState {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
+  registrationSuccess: boolean; // ✅ NEW FLAG
 }
 
 const initialState: AuthState = {
@@ -24,6 +24,7 @@ const initialState: AuthState = {
   loading: false,
   error: null,
   isAuthenticated: !!localStorage.getItem('token'),
+  registrationSuccess: false, // ✅ INITIALLY false
 };
 
 // Async login
@@ -62,9 +63,14 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       localStorage.removeItem('token');
     },
+    clearAuthState(state) {
+      state.error = null;
+      state.registrationSuccess = false; // ✅ RESET
+    },
   },
   extraReducers: builder => {
     builder
+      // LOGIN
       .addCase(loginUser.pending, state => {
         state.loading = true;
         state.error = null;
@@ -80,23 +86,27 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
+
+      // REGISTER
       .addCase(registerUser.pending, state => {
         state.loading = true;
         state.error = null;
+        state.registrationSuccess = false;
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
+      .addCase(registerUser.fulfilled, (state) => {
         state.loading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.isAuthenticated = true;
-        localStorage.setItem('token', action.payload.token);
+        state.registrationSuccess = true; // ✅ Only flag, no token saved
+        state.user = null;
+        state.token = null;
+        state.isAuthenticated = false;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+        state.registrationSuccess = false;
       });
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, clearAuthState } = authSlice.actions;
 export default authSlice.reducer;

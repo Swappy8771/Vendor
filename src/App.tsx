@@ -13,6 +13,10 @@ import UserHome from './pages/Buyer/Home';
 import SellerDashboard from './pages/Seller/Dashboard';
 import AdminDashboard from './pages/Admin/Dashboard';
 
+// Role-protected wrapper
+import RoleProtectedProfile from './router/RoleProtectedProfile';
+import ProfilePage from './features/user/componets/ProfilePage';
+
 export default function App() {
   return (
     <Router>
@@ -25,7 +29,7 @@ export default function App() {
         <Route path="/register" element={<RegisterForm />} />
 
         {/* 🧑 Buyer/User Layout & Routes */}
-        <Route
+       <Route
           path="/user/home"
           element={
             <UserLayout>
@@ -33,8 +37,16 @@ export default function App() {
             </UserLayout>
           }
         />
+        <Route
+          path="/user/profile"
+          element={
+            <UserLayout>
+              <ProfilePage />
+            </UserLayout>
+          }
+        />
 
-        {/* 🛍️ Seller Layout & Routes */}
+        {/* 🛍️ Seller Routes */}
         <Route
           path="/seller/dashboard"
           element={
@@ -43,8 +55,16 @@ export default function App() {
             </SellerLayout>
           }
         />
+        <Route
+          path="/seller/profile"
+          element={
+            <SellerLayout>
+              <ProfilePage />
+            </SellerLayout>
+          }
+        />
 
-        {/* 🛡️ Admin Layout & Routes */}
+        {/* 🛡️ Admin Routes */}
         <Route
           path="/admin/dashboard"
           element={
@@ -53,6 +73,17 @@ export default function App() {
             </AdminLayout>
           }
         />
+        <Route
+          path="/admin/profile"
+          element={
+            <AdminLayout>
+              <ProfilePage />
+            </AdminLayout>
+          }
+        />
+
+        {/* 👤 Profile Route — dynamic role-based layout */}
+        <Route path="/profile" element={<RoleProtectedProfile />} />
 
         {/* 🔴 404 fallback */}
         <Route path="*" element={<div>404 | Page not found</div>} />

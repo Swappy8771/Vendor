@@ -1,8 +1,8 @@
 // src/features/wishlist/components/WishlistCard.tsx
 
-import type { WishlistItem } from './wishlistTypes';
-import { useAppDispatch } from './../../hooks/useReduxTypedHooks';
-import { removeWishlistItem } from './wishlistSlice';
+import type { WishlistItem } from '../wishlistTypes';
+import { useAppDispatch } from '../../../hooks/useReduxTypedHooks';
+import { removeWishlistItem } from '../wishlistSlice';
 
 export default function WishlistCard({ item }: { item: WishlistItem }) {
   const dispatch = useAppDispatch();

@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../hooks/useReduxTypedHooks';
 import { fetchWishlist } from './wishlistSlice';
-import WishlistCard from './WishlistCard';
+import WishlistCard from './componets/WishlistCard';
 
 export default function WishlistPage() {
   const dispatch = useAppDispatch();
