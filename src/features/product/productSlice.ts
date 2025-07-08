@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   fetchAllProducts,
   fetchProductById,
+  fetchMyProducts,
   createProduct,
   updateProduct,
   deleteProduct
@@ -22,8 +23,7 @@ const initialState: ProductState = {
   error: null
 };
 
-// 🚀 Thunks
-
+// 🔁 Thunks
 export const getProducts = createAsyncThunk('product/getAll', async (_, thunkAPI) => {
   try {
     return await fetchAllProducts();
@@ -32,16 +32,21 @@ export const getProducts = createAsyncThunk('product/getAll', async (_, thunkAPI
   }
 });
 
-export const getProductById = createAsyncThunk(
-  'product/getOne',
-  async (id: string, thunkAPI) => {
-    try {
-      return await fetchProductById(id);
-    } catch {
-      return thunkAPI.rejectWithValue('Failed to fetch product');
-    }
+export const getProductById = createAsyncThunk('product/getOne', async (id: string, thunkAPI) => {
+  try {
+    return await fetchProductById(id);
+  } catch {
+    return thunkAPI.rejectWithValue('Failed to fetch product');
   }
-);
+});
+
+export const getMyProducts = createAsyncThunk('product/getMy', async (_, thunkAPI) => {
+  try {
+    return await fetchMyProducts();
+  } catch {
+    return thunkAPI.rejectWithValue('Failed to fetch your products');
+  }
+});
 
 export const createNewProduct = createAsyncThunk(
   'product/create',
@@ -56,10 +61,7 @@ export const createNewProduct = createAsyncThunk(
 
 export const editProduct = createAsyncThunk(
   'product/update',
-  async (
-    { id, payload }: { id: string; payload: Partial<Product> },
-    thunkAPI
-  ) => {
+  async ({ id, payload }: { id: string; payload: Partial<Product> }, thunkAPI) => {
     try {
       return await updateProduct({ id, payload });
     } catch {
@@ -68,19 +70,15 @@ export const editProduct = createAsyncThunk(
   }
 );
 
-export const removeProduct = createAsyncThunk(
-  'product/delete',
-  async (id: string, thunkAPI) => {
-    try {
-      return await deleteProduct(id);
-    } catch {
-      return thunkAPI.rejectWithValue('Failed to delete product');
-    }
+export const removeProduct = createAsyncThunk('product/delete', async (id: string, thunkAPI) => {
+  try {
+    return await deleteProduct(id);
+  } catch {
+    return thunkAPI.rejectWithValue('Failed to delete product');
   }
-);
+});
 
 // 🧠 Slice
-
 const productSlice = createSlice({
   name: 'product',
   initialState,
@@ -91,7 +89,7 @@ const productSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // 📦 Fetch all
+      // 🔃 All Products
       .addCase(getProducts.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -105,22 +103,34 @@ const productSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // 🔍 Fetch one
+      // 👤 My Products
+      .addCase(getMyProducts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getMyProducts.fulfilled, (state, action) => {
+        state.products = action.payload;
+        state.loading = false;
+      })
+      .addCase(getMyProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+      // 🔍 One Product
       .addCase(getProductById.fulfilled, (state, action) => {
         state.selectedProduct = action.payload;
       })
 
-      // ➕ Add
+      // ➕ Create
       .addCase(createNewProduct.fulfilled, (state, action) => {
         state.products.push(action.payload);
       })
 
-      // ✏️ Update
+      // ✏️ Edit
       .addCase(editProduct.fulfilled, (state, action) => {
         const index = state.products.findIndex((p) => p._id === action.payload._id);
-        if (index !== -1) {
-          state.products[index] = action.payload;
-        }
+        if (index !== -1) state.products[index] = action.payload;
       })
 
       // ❌ Delete

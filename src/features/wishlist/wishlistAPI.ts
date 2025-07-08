@@ -1,19 +1,19 @@
 // src/features/wishlist/wishlistApi.ts
-import axios from 'axios';
+import API from '../../services/axios'; // ✅ Use the custom Axios instance
 
 const API_URL = '/api/wishlist';
 
 export const getWishlist = async () => {
-  const res = await axios.get(API_URL);
+  const res = await API.get(API_URL); // ✅ Use `API` instead of `axios`
   return res.data;
 };
 
 export const addToWishlist = async (productId: string) => {
-  const res = await axios.post(API_URL, { productId });
+  const res = await API.post(API_URL, { productId }); // ✅ token included via interceptor
   return res.data;
 };
 
 export const removeFromWishlist = async (productId: string) => {
-  await axios.delete(`${API_URL}/${productId}`);
+  await API.delete(`${API_URL}/${productId}`); // ✅ same here
   return productId;
 };

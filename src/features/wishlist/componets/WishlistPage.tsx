@@ -1,9 +1,9 @@
 // src/features/wishlist/WishlistPage.tsx
 
 import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../../hooks/useReduxTypedHooks';
-import { fetchWishlist } from './wishlistSlice';
-import WishlistCard from './componets/WishlistCard';
+import { useAppDispatch, useAppSelector } from '../../../hooks/useReduxTypedHooks';
+import { fetchWishlist } from '../wishlistSlice';
+import WishlistCard from './WishlistCard';
 
 export default function WishlistPage() {
   const dispatch = useAppDispatch();

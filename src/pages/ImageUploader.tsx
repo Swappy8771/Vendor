@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { uploadToCloudinary } from '../utils/uploadToCloudinary'; // ✅ must return { url, public_id }
+import React, { useState, useEffect } from 'react';
+import { uploadToCloudinary } from '../utils/uploadToCloudinary';
 
 interface UploadedImage {
   url: string;
@@ -9,11 +9,23 @@ interface UploadedImage {
 interface ImageUploaderProps {
   onUpload: (image: UploadedImage) => void;
   multiple?: boolean;
+  initialImages?: UploadedImage[]; // ✅ for edit mode
 }
 
-const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, multiple = false }) => {
+const ImageUploader: React.FC<ImageUploaderProps> = ({
+  onUpload,
+  multiple = false,
+  initialImages = []
+}) => {
   const [loading, setLoading] = useState(false);
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
+
+  // ✅ Pre-fill previously saved images in edit mode
+  useEffect(() => {
+    if (initialImages.length > 0) {
+      setUploadedImages(initialImages);
+    }
+  }, [initialImages]);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -25,17 +37,15 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, multiple = fals
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const result = await uploadToCloudinary(file); // ✅ ensure result is { url, public_id }
+        const result = await uploadToCloudinary(file);
 
-        // ✅ ensure correct structure
         if (typeof result === 'object' && result.url && result.public_id) {
           uploads.push(result);
-          onUpload(result); // pass full object back to parent
+          onUpload(result); // ✅ push to form
         }
       }
 
-      // ✅ strictly an array of UploadedImage
-      setUploadedImages((prev: UploadedImage[]) => [...prev, ...uploads]);
+      setUploadedImages((prev) => [...prev, ...uploads]);
     } catch (err) {
       console.error('Image upload error:', err);
       alert('Failed to upload image. Please try again.');
@@ -55,6 +65,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, multiple = fals
                    file:rounded-md file:border-0 file:text-sm file:font-semibold
                    file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
       />
+
       {loading && <p className="text-blue-600">Uploading...</p>}
 
       <div className="flex flex-wrap gap-4">
@@ -62,7 +73,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, multiple = fals
           <img
             key={index}
             src={img.url}
-            alt="Uploaded"
+            alt={`Uploaded-${index}`}
             className="w-24 h-24 object-cover rounded border"
           />
         ))}
