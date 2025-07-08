@@ -12,7 +12,6 @@ const Sidebar = () => {
 
   return (
     <aside className="w-64 min-h-screen bg-white border-r p-4 shadow-sm">
-      <div className="text-xl font-bold mb-6">🛒 Shoply</div>
 
       <nav className="flex flex-col gap-2">
         {links.map(({ label, icon, path }) => (

@@ -9,6 +9,7 @@ import orderReducer from '../features/orders/orderSlice';
 import cartReducer from '../features/cart/cartSlice';
 import wishlistReducer from '../features/wishlist/wishlistSlice';
 import reviewReducer from '../features/reviews/reviewSlice';
+import adminReducer from '../features/admin/adminSlice';
 
 // ✅ Named export
 export const store = configureStore({
@@ -21,6 +22,7 @@ export const store = configureStore({
     cart: cartReducer,
     wishlist: wishlistReducer,
     reviews: reviewReducer,
+    admin: adminReducer,
   },
 });
 

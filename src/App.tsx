@@ -13,9 +13,16 @@ import UserHome from './pages/Buyer/Home';
 import SellerDashboard from './pages/Seller/Dashboard';
 import AdminDashboard from './pages/Admin/Dashboard';
 
-// Role-protected wrapper
 import RoleProtectedProfile from './router/RoleProtectedProfile';
 import ProfilePage from './features/user/componets/ProfilePage';
+import AllUsers from './features/admin/component/AllUsers';
+import AllSellers from './features/admin/component/AllSellers';
+
+// Products
+// import ProductList from './features/product/componets/ProductList';
+// import ProductDetail from './features/product/componets/ProductDetails';
+// import ProductForm from './features/product/componets/ProductForm';
+// import MyProducts from './features/product/componets/MyProducts';
 
 export default function App() {
   return (
@@ -24,12 +31,14 @@ export default function App() {
         {/* 🔁 Default redirect */}
         <Route path="/" element={<Navigate to="/login" />} />
 
-        {/* 🟢 Auth Routes */}
+        {/* 🟢 Public Auth Routes */}
         <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<RegisterForm />} />
 
-        {/* 🧑 Buyer/User Layout & Routes */}
-       <Route
+     
+
+        {/* 🧑 Buyer/User Routes */}
+        <Route
           path="/user/home"
           element={
             <UserLayout>
@@ -63,6 +72,7 @@ export default function App() {
             </SellerLayout>
           }
         />
+       
 
         {/* 🛡️ Admin Routes */}
         <Route
@@ -81,11 +91,27 @@ export default function App() {
             </AdminLayout>
           }
         />
+        <Route
+          path="/admin/users"
+          element={
+            <AdminLayout>
+              <AllUsers />
+            </AdminLayout>
+          }
+        />
+        <Route
+          path="/admin/sellers"
+          element={
+            <AdminLayout>
+              <AllSellers />
+            </AdminLayout>
+          }
+        />
 
-        {/* 👤 Profile Route — dynamic role-based layout */}
+        {/* 👤 Dynamic Role-Protected Profile Route */}
         <Route path="/profile" element={<RoleProtectedProfile />} />
 
-        {/* 🔴 404 fallback */}
+        {/* ❌ 404 Fallback */}
         <Route path="*" element={<div>404 | Page not found</div>} />
       </Routes>
     </Router>
