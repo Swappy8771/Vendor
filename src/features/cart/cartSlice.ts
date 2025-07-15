@@ -15,6 +15,7 @@ export const fetchCart = createAsyncThunk('cart/fetch', async (_, thunkAPI) => {
     return await getCart();
   } catch (err) {
     return thunkAPI.rejectWithValue('Failed to fetch cart');
+    console.log(err)
   }
 });
 
@@ -25,6 +26,7 @@ export const addItemToCart = createAsyncThunk(
       return await addToCart(item);
     } catch (err) {
       return thunkAPI.rejectWithValue('Failed to add item to cart');
+    console.log(err)
     }
   }
 );
@@ -36,6 +38,8 @@ export const removeItemFromCart = createAsyncThunk(
       return await removeFromCart(productId);
     } catch (err) {
       return thunkAPI.rejectWithValue('Failed to remove item from cart');
+    console.log(err)
+
     }
   }
 );

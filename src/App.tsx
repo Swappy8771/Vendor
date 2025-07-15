@@ -30,6 +30,7 @@ import WishlistPage from './features/wishlist/componets/WishlistPage';
 import ProductList from './features/product/components/ProductList';
 import ProductForm from './features/product/components/ProductForm';
 import ProductDetail from './features/product/components/ProductDetails'; // future
+import AddToCart from './features/wishlist/componets/AddToCart';
 
 export default function App() {
   return (
@@ -65,6 +66,7 @@ export default function App() {
         <Route path="/user/products" element={<UserLayout><ProductList /></UserLayout>} />
         <Route path="/user/products/:id" element={<UserLayout><ProductDetail /></UserLayout>} />
         <Route path="/user/wishlist" element={<UserLayout><WishlistPage /></UserLayout>} />
+        <Route path="/user/add-to-cart" element={<UserLayout><AddToCart /></UserLayout>} />
 
         {/* 👥 Shared Profile */}
         <Route path="/profile" element={<RoleProtectedProfile />} />

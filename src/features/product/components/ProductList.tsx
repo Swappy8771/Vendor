@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useReduxTypedHooks';
 import { getProducts } from '../productSlice';
 import { addWishlistItem, removeWishlistItem } from '../../wishlist/wishlistSlice';
+import { addItemToCart } from '../../cart/cartSlice'; // ✅ Import
 import { Link } from 'react-router-dom';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 
@@ -21,6 +22,10 @@ const ProductList: React.FC = () => {
     } else {
       dispatch(addWishlistItem(productId));
     }
+  };
+
+  const handleAddToCart = (product: any) => {
+    dispatch(addItemToCart(product._id)); // ✅ Dispatch the thunk with product
   };
 
   if (loading) return <p>Loading products...</p>;
@@ -55,6 +60,14 @@ const ProductList: React.FC = () => {
               <h2 className="mt-2 font-bold text-lg">{product.name}</h2>
               <p>₹{product.price}</p>
             </Link>
+
+            {/* 🛒 Add to Cart Button */}
+            <button
+              onClick={() => handleAddToCart(product)}
+              className="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded"
+            >
+              Add to Cart
+            </button>
           </div>
         );
       })}

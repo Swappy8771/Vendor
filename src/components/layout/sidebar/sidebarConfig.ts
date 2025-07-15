@@ -6,6 +6,8 @@ export const sidebarConfig = {
     { label: 'Orders', icon: '📦', path: '/user/orders' },
     { label: 'Wishlist', icon: '❤️', path: '/user/wishlist' },
     { label: 'Profile', icon: '👤', path: '/user/profile' },
+    { label: 'Add To Cart', icon: '👤', path: '/user/add-to-cart' },
+
   ],
   seller: [
     { label: 'Dashboard', icon: '📊', path: '/seller/dashboard' },
