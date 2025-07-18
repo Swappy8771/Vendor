@@ -1,11 +1,12 @@
+// src/hooks/useAuth.ts
 import { useAppSelector } from './useReduxTypedHooks';
 
 export const useAuth = () => {
-  const auth = useAppSelector((state) => state.auth); // Adjust if your slice is named differently
+  const auth = useAppSelector(state => state.auth);
 
   return {
     user: auth.user,
-    role: auth.user?.role || 'guest', // fallback role if unauthenticated
+    role: auth.user?.role || 'guest',
     isAuthenticated: !!auth.user,
   };
 };

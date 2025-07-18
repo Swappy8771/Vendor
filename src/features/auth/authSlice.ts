@@ -1,3 +1,4 @@
+// src/features/auth/authSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { loginAPI, registerAPI } from './authAPI';
 
@@ -15,19 +16,22 @@ interface AuthState {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
-  registrationSuccess: boolean; // ✅ NEW FLAG
+  registrationSuccess: boolean;
 }
 
+// 🔁 Load user/token from localStorage if available
+const userFromStorage = localStorage.getItem('user');
+const tokenFromStorage = localStorage.getItem('token');
+
 const initialState: AuthState = {
-  user: null,
-  token: localStorage.getItem('token'),
+  user: userFromStorage ? JSON.parse(userFromStorage) : null,
+  token: tokenFromStorage || null,
   loading: false,
   error: null,
-  isAuthenticated: !!localStorage.getItem('token'),
-  registrationSuccess: false, // ✅ INITIALLY false
+  isAuthenticated: !!tokenFromStorage,
+  registrationSuccess: false,
 };
 
-// Async login
 export const loginUser = createAsyncThunk(
   'auth/login',
   async (formData: { email: string; password: string }, thunkAPI) => {
@@ -35,12 +39,11 @@ export const loginUser = createAsyncThunk(
       const res = await loginAPI(formData);
       return res;
     } catch (err: any) {
-      return thunkAPI.rejectWithValue(err.response.data.message || 'Login failed');
+      return thunkAPI.rejectWithValue(err.response?.data?.message || 'Login failed');
     }
   }
 );
 
-// Async register
 export const registerUser = createAsyncThunk(
   'auth/register',
   async (formData: any, thunkAPI) => {
@@ -48,7 +51,7 @@ export const registerUser = createAsyncThunk(
       const res = await registerAPI(formData);
       return res;
     } catch (err: any) {
-      return thunkAPI.rejectWithValue(err.response.data.message || 'Register failed');
+      return thunkAPI.rejectWithValue(err.response?.data?.message || 'Register failed');
     }
   }
 );
@@ -62,15 +65,15 @@ const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
     },
     clearAuthState(state) {
       state.error = null;
-      state.registrationSuccess = false; // ✅ RESET
+      state.registrationSuccess = false;
     },
   },
   extraReducers: builder => {
     builder
-      // LOGIN
       .addCase(loginUser.pending, state => {
         state.loading = true;
         state.error = null;
@@ -80,30 +83,19 @@ const authSlice = createSlice({
         state.user = action.payload.user;
         state.token = action.payload.token;
         state.isAuthenticated = true;
+
+        // 🧠 Persist data
         localStorage.setItem('token', action.payload.token);
+        localStorage.setItem('user', JSON.stringify(action.payload.user));
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
 
-      // REGISTER
-      .addCase(registerUser.pending, state => {
-        state.loading = true;
-        state.error = null;
-        state.registrationSuccess = false;
-      })
       .addCase(registerUser.fulfilled, (state) => {
         state.loading = false;
-        state.registrationSuccess = true; // ✅ Only flag, no token saved
-        state.user = null;
-        state.token = null;
-        state.isAuthenticated = false;
-      })
-      .addCase(registerUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-        state.registrationSuccess = false;
+        state.registrationSuccess = true;
       });
   },
 });

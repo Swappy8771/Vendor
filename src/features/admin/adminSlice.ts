@@ -1,216 +1,128 @@
-import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
-import { AxiosError } from 'axios';
-  import API from '../../services/axios';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';import {
+  getAdminOverview,
+  getAllUsers,
+  getAllSellers,
+  getAllOrders,
+  verifySeller,
+} from './adminAPI';
+import type { AdminState, AdminStats, AdminUser, AdminSeller, AdminOrder } from './adminType';
 
-// =======================
-// ✅ Types
-// =======================
-export type AdminUser = {
-  _id: string;
-  name: string;
-  email: string;
-  role: string;
-  isVerified: boolean;
-};
-
-export type AdminSeller = {
-  _id: string;
-  name: string;
-  email: string;
-  isVerified: boolean;
-};
-
-export type AdminOrder = {
-  _id: string;
-  user: string;
-  totalAmount: number;
-  status: string;
-};
-
-export type AdminStats = {
-  users: number;
-  sellers: number;
-  orders: number;
-  revenue: number;
-};
-
-interface AdminState {
-  loading: boolean;
-  users: AdminUser[];
-  sellers: AdminSeller[];
-  orders: AdminOrder[];
-  stats: AdminStats | null;
-  error: string | null;
-}
-
+// ✅ Initial state
 const initialState: AdminState = {
-  loading: false,
+  stats: null,
   users: [],
   sellers: [],
   orders: [],
-  stats: null,
+  loading: false,
   error: null,
 };
 
-// =======================
 // ✅ Async Thunks
-// =======================
+export const fetchOverview = createAsyncThunk<AdminStats>('admin/fetchOverview', getAdminOverview);
+export const fetchUsers = createAsyncThunk<AdminUser[]>('admin/fetchUsers', getAllUsers);
+export const fetchSellers = createAsyncThunk<AdminSeller[]>('admin/fetchSellers', getAllSellers);
+export const fetchOrders = createAsyncThunk<AdminOrder[]>('admin/fetchOrders', getAllOrders);
+export const verifySellerById = createAsyncThunk<AdminSeller, string>(
+  'admin/verifySeller',
+  verifySeller
+);
 
-export const fetchOverview = createAsyncThunk<
-  AdminStats,
-  void,
-  { rejectValue: string }
->('admin/fetchOverview', async (_, { rejectWithValue }) => {
-  try {
-    const res = await API.get('/api/admin/overview');
-    return res.data;
-  } catch (err) {
-    const error = err as AxiosError;
-    return rejectWithValue(error.message || 'Failed to fetch overview');
-  }
-});
-
-export const fetchUsers = createAsyncThunk<
-  AdminUser[],
-  void,
-  { rejectValue: string }
->('admin/fetchUsers', async (_, { rejectWithValue }) => {
-  try {
-    const res = await API.get('/api/admin/users');
-    const data = Array.isArray(res.data) ? res.data : res.data.users;
-    return data;
-  } catch (err) {
-    const error = err as AxiosError;
-    return rejectWithValue(error.message || 'Failed to fetch users');
-  }
-});
-
-export const fetchSellers = createAsyncThunk<
-  AdminSeller[],
-  void,
-  { rejectValue: string }
->('admin/fetchSellers', async (_, { rejectWithValue }) => {
-  try {
-    const res = await API.get('/api/admin/sellers');
-    const data = Array.isArray(res.data) ? res.data : res.data.sellers;
-    return data;
-  } catch (err) {
-    const error = err as AxiosError;
-    return rejectWithValue(error.message || 'Failed to fetch sellers');
-  }
-});
-
-export const fetchOrders = createAsyncThunk<
-  AdminOrder[],
-  void,
-  { rejectValue: string }
->('admin/fetchOrders', async (_, { rejectWithValue }) => {
-  try {
-    const res = await API.get('/api/admin/orders');
-    return res.data.orders || [];
-  } catch (err) {
-    const error = err as AxiosError;
-    return rejectWithValue(error.message || 'Failed to fetch orders');
-  }
-});
-
-export const verifySellerById = createAsyncThunk<
-  AdminSeller,
-  string,
-  { rejectValue: string }
->('admin/verifySeller', async (sellerId, { rejectWithValue }) => {
-  try {
-    const res = await API.patch(`/api/admin/verify-seller/${sellerId}`);
-    return res.data;
-  } catch (err) {
-    const error = err as AxiosError;
-    return rejectWithValue(error.message || 'Failed to verify seller');
-  }
-});
-
-// =======================
 // ✅ Slice
-// =======================
-
 const adminSlice = createSlice({
   name: 'admin',
   initialState,
-  reducers: {},
-  extraReducers: builder => {
+  reducers: {
+    clearAdminError(state) {
+      state.error = null;
+    },
+    setUsers(state, action: PayloadAction<AdminUser[]>) {
+      state.users = action.payload;
+    },
+    setLoading(state, action: PayloadAction<boolean>) {
+      state.loading = action.payload;
+    },
+    setError(state, action: PayloadAction<string>) {
+      state.error = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
     builder
       // 📊 Overview
-      .addCase(fetchOverview.pending, state => {
+      .addCase(fetchOverview.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
-      .addCase(fetchOverview.fulfilled, (state, action: PayloadAction<AdminStats>) => {
-        state.loading = false;
+      .addCase(fetchOverview.fulfilled, (state, action) => {
         state.stats = action.payload;
+        state.loading = false;
+        state.error = null;
       })
       .addCase(fetchOverview.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Failed to fetch overview';
+        state.error = action.error.message || 'Failed to fetch overview';
       })
 
-      // 👥 Users
-      .addCase(fetchUsers.pending, state => {
+      // 👤 Users
+      .addCase(fetchUsers.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
-      .addCase(fetchUsers.fulfilled, (state, action: PayloadAction<AdminUser[]>) => {
-        state.loading = false;
+      .addCase(fetchUsers.fulfilled, (state, action) => {
         state.users = action.payload;
+        state.loading = false;
+        state.error = null;
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Failed to fetch users';
+        state.error = action.error.message || 'Failed to fetch users';
       })
 
-      // 🏪 Sellers
-      .addCase(fetchSellers.pending, state => {
+      // 🛍️ Sellers
+      .addCase(fetchSellers.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
-      .addCase(fetchSellers.fulfilled, (state, action: PayloadAction<AdminSeller[]>) => {
-        state.loading = false;
+      .addCase(fetchSellers.fulfilled, (state, action) => {
         state.sellers = action.payload;
+        state.loading = false;
+        state.error = null;
       })
       .addCase(fetchSellers.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Failed to fetch sellers';
+        state.error = action.error.message || 'Failed to fetch sellers';
       })
 
       // 📦 Orders
-      .addCase(fetchOrders.pending, state => {
+      .addCase(fetchOrders.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
-      .addCase(fetchOrders.fulfilled, (state, action: PayloadAction<AdminOrder[]>) => {
-        state.loading = false;
+      .addCase(fetchOrders.fulfilled, (state, action) => {
         state.orders = action.payload;
+        state.loading = false;
+        state.error = null;
       })
       .addCase(fetchOrders.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Failed to fetch orders';
+        state.error = action.error.message || 'Failed to fetch orders';
       })
 
-      // ✅ Seller Verification
-      .addCase(verifySellerById.pending, state => {
+      // ✅ Verify Seller
+      .addCase(verifySellerById.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
-      .addCase(verifySellerById.fulfilled, (state, action: PayloadAction<AdminSeller>) => {
+      .addCase(verifySellerById.fulfilled, (state, action) => {
+        const index = state.sellers.findIndex((s) => s._id === action.payload._id);
+        if (index !== -1) {
+          state.sellers[index] = action.payload;
+        }
         state.loading = false;
-        // update the verified seller in the list
-        state.sellers = state.sellers.map(seller =>
-          seller._id === action.payload._id ? action.payload : seller
-        );
+        state.error = null;
       })
       .addCase(verifySellerById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || 'Failed to verify seller';
+        state.error = action.error.message || 'Failed to verify seller';
       });
   },
 });
 
+// ✅ Exports
+export const { clearAdminError, setUsers, setLoading, setError } = adminSlice.actions;
 export default adminSlice.reducer;

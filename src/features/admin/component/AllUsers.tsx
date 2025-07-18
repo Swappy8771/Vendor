@@ -2,33 +2,15 @@
 
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../hooks/useReduxTypedHooks';
-import { getAllUsers } from '../adminAPI';
-import { setUsers, setLoading, setError } from '../adminSlice';
-import type { User } from '../../user/userTypes'; // Global User type
+import { fetchUsers } from '../adminSlice'; // <-- Async thunk
+import type { User } from '../../user/userTypes';
 
 const AllUsers = () => {
   const dispatch = useAppDispatch();
   const { users, loading, error } = useAppSelector((state) => state.admin);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        dispatch(setLoading(true));
-        const response: User[] = await getAllUsers();
-
-        if (!Array.isArray(response)) {
-          throw new Error('Invalid response format');
-        }
-
-        dispatch(setUsers(response));
-      } catch (err: any) {
-        dispatch(setError(err.message || 'Failed to fetch users'));
-      } finally {
-        dispatch(setLoading(false));
-      }
-    };
-
-    fetchUsers();
+    dispatch(fetchUsers());
   }, [dispatch]);
 
   return (
