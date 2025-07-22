@@ -6,25 +6,27 @@ import { removeWishlistItem } from '../wishlistSlice';
 
 export default function WishlistCard({ item }: { item: WishlistItem }) {
   const dispatch = useAppDispatch();
-
-  const imageUrl = item.images[0]?.url || '/placeholder.jpg'; // fallback image
+  const imageUrl = item.images[0]?.url || '/placeholder.jpg';
 
   return (
-    <div className="border p-4 rounded shadow-sm flex items-center justify-between bg-white">
+    <div className="bg-white shadow-md rounded-2xl p-4 flex items-center justify-between transition hover:shadow-lg">
+      {/* Product Info */}
       <div className="flex items-center gap-4">
         <img
           src={imageUrl}
           alt={item.name}
-          className="w-16 h-16 object-cover rounded"
+          className="w-20 h-20 object-cover rounded-lg"
         />
         <div>
-          <h4 className="text-lg font-semibold">{item.name}</h4>
-          <p className="text-sm text-gray-500">₹{item.price}</p>
+          <h4 className="text-lg font-medium text-gray-800">{item.name}</h4>
+          <p className="text-sm text-gray-500 mt-1">₹{item.price}</p>
         </div>
       </div>
+
+      {/* Remove Button */}
       <button
         onClick={() => dispatch(removeWishlistItem(item._id))}
-        className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+        className="text-sm bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition"
       >
         Remove
       </button>

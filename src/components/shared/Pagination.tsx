@@ -1,3 +1,5 @@
+// src/components/shared/Pagination.tsx
+
 import { cn } from '../../utils/cn';
 
 type PaginationProps = {
@@ -27,12 +29,7 @@ const Pagination = ({
       }
     }
 
-    const pages = [];
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-
-    return pages;
+    return Array.from({ length: end - start + 1 }, (_, i) => i + start);
   };
 
   const handleClick = (page: number) => {
@@ -42,8 +39,7 @@ const Pagination = ({
   };
 
   return (
-    <div className={cn("flex items-center gap-1", className)}>
-      {/* Previous */}
+    <div className={cn("flex items-center justify-center gap-1", className)}>
       <button
         onClick={() => handleClick(currentPage - 1)}
         disabled={currentPage === 1}
@@ -55,7 +51,6 @@ const Pagination = ({
         &lt;
       </button>
 
-      {/* Pages */}
       {getPageNumbers().map((page) => (
         <button
           key={page}
@@ -71,7 +66,6 @@ const Pagination = ({
         </button>
       ))}
 
-      {/* Next */}
       <button
         onClick={() => handleClick(currentPage + 1)}
         disabled={currentPage === totalPages}

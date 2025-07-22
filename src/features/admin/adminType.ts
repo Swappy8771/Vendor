@@ -1,9 +1,12 @@
 // src/features/admin/adminType.ts
+
+export type Role = 'user' | 'admin' | 'seller'; // 👈 Strict union type
+
 export interface AdminUser {
   _id: string;
   name: string;
   email: string;
-  role: string;
+  role: Role; // 👈 Enforced strict role type
   createdAt: string;
 }
 
@@ -40,7 +43,7 @@ export interface AdminStats {
 export interface AdminState {
   stats: AdminStats | null;
   users: AdminUser[];
-  sellers: AdminSeller[];
+  sellers: AdminSeller[]; // ✅ Will now be assignable to User[]
   orders: AdminOrder[];
   loading: boolean;
   error: string | null;

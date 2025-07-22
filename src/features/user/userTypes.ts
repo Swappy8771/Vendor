@@ -18,13 +18,14 @@ export interface SellerInfo {
 }
 
 export interface User {
+  isVerified?: boolean;
   _id: string;
   name: string;
   email: string;
-  password?: string; // Only used during register
+  password?: string;
   phone?: string;
   role: 'user' | 'seller' | 'admin';
-  addresses: Address[];
+  addresses?: Address[];
   sellerInfo?: SellerInfo;
   createdAt?: string;
   updatedAt?: string;
