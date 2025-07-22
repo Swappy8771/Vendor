@@ -10,20 +10,41 @@ export default function LoginForm() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Load from localStorage if present
+  useEffect(() => {
+    const encrypted = localStorage.getItem('rememberedUser');
+    if (encrypted) {
+      try {
+        const decrypted = atob(encrypted); // base64 decode
+        const { email, password } = JSON.parse(decrypted);
+        setEmail(email);
+        setPassword(password);
+        setRememberMe(true);
+      } catch {
+        console.warn('Failed to decode remembered user');
+      }
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (rememberMe) {
+      const encrypted = btoa(JSON.stringify({ email, password }));
+      localStorage.setItem('rememberedUser', encrypted);
+    } else {
+      localStorage.removeItem('rememberedUser');
+    }
+
     dispatch(loginUser({ email, password }));
   };
 
   useEffect(() => {
-    if (user?.role === 'user') {
-      navigate('/user/home');
-    } else if (user?.role === 'seller') {
-      navigate('/seller/dashboard');
-    } else if (user?.role === 'admin') {
-      navigate('/admin/dashboard');
-    }
+    if (user?.role === 'user') navigate('/user/home');
+    else if (user?.role === 'seller') navigate('/seller/dashboard');
+    else if (user?.role === 'admin') navigate('/admin/dashboard');
   }, [user, navigate]);
 
   return (
@@ -61,6 +82,23 @@ export default function LoginForm() {
               placeholder="••••••••"
               className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+
+          {/* Remember Me and Forgot Password */}
+          <div className="flex items-center justify-between text-sm text-gray-600">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="h-4 w-4"
+              />
+              Remember me
+            </label>
+
+            <Link to="/forgot-password" className="text-blue-600 hover:underline">
+              Forgot password?
+            </Link>
           </div>
 
           <button
