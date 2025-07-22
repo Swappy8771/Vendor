@@ -24,12 +24,20 @@ const MyProducts = () => {
     <div className="max-w-7xl mx-auto px-6 py-8">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-3xl font-bold text-gray-800">My Products</h2>
-        <Link
-          to="/seller/products/create"
-          className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow-md transition"
-        >
-          + Add Product
-        </Link>
+        <div className="flex gap-4">
+          <Link
+            to="/seller/products/create"
+            className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow-md transition"
+          >
+            + Add Product
+          </Link>
+          <Link
+            to="/seller/products/bulk-upload"
+            className="inline-block bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg shadow-md transition"
+          >
+            ⬆ Bulk Upload
+          </Link>
+        </div>
       </div>
 
       {loading && (

@@ -16,18 +16,31 @@ export const fetchMyProducts = async (): Promise<Product[]> => {
   return res.data;
 };
 
-// productAPI.ts
 export const createProduct = async (data: Partial<Product>) => {
-  const res = await API.post('/api/products', data); // form.images must be filled
+  const res = await API.post('/api/products', data);
   return res.data.product;
 };
 
 export const updateProduct = async ({ id, payload }: { id: string; payload: Partial<Product> }) => {
-  const res = await API.put(`/api/products/${id}`, payload); // same here
+  const res = await API.put(`/api/products/${id}`, payload);
   return res.data.product;
 };
 
 export const deleteProduct = async (id: string): Promise<{ message: string }> => {
   const res = await API.delete(`/api/products/${id}`);
+  return res.data;
+};
+
+// ✅ Bulk Upload Products
+export const bulkUploadProducts = async (file: File): Promise<{ message: string }> => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const res = await API.post('/api/products/bulk-upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
   return res.data;
 };

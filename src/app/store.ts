@@ -10,6 +10,8 @@ import cartReducer from '../features/cart/cartSlice';
 import wishlistReducer from '../features/wishlist/wishlistSlice';
 import reviewReducer from '../features/reviews/reviewSlice';
 import adminReducer from '../features/admin/adminSlice';
+// import bulkUploadReducer from '../features/product/bulkUploadSlice';
+
 
 // ✅ Named export
 export const store = configureStore({
@@ -23,6 +25,7 @@ export const store = configureStore({
     wishlist: wishlistReducer,
     reviews: reviewReducer,
     admin: adminReducer,
+    // bulkUpload: bulkUploadReducer,
   },
 });
 

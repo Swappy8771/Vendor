@@ -31,6 +31,7 @@ import ProductList from './features/product/components/ProductList';
 import ProductForm from './features/product/components/ProductForm';
 import ProductDetail from './features/product/components/ProductDetails'; // future
 import AddToCart from './features/wishlist/componets/AddToCart';
+import BulkProductUploader from './features/product/components/BulkProductUploader';
 
 export default function App() {
   return (
@@ -59,6 +60,9 @@ export default function App() {
         <Route path="/seller/products/edit/:id" element={<SellerLayout><ProductForm /></SellerLayout>} />
         <Route path="/seller/products/:id" element={<SellerLayout><ProductDetail /></SellerLayout>} />
         <Route path="/seller/products/mine" element={<SellerLayout><MyProducts /></SellerLayout>} />
+        <Route path="/seller/products/bulk-upload" element={<SellerLayout><BulkProductUploader /></SellerLayout>} />
+
+
 
         {/* 👨‍💻 Buyer/User Routes */}
         <Route path="/user/home" element={<UserLayout><UserHome /></UserLayout>} />

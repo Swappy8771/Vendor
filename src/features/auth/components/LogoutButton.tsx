@@ -1,4 +1,3 @@
-// src/features/auth/components/LogoutButton.tsx
 
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../../hooks/useReduxTypedHooks';

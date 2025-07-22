@@ -61,7 +61,7 @@ export default function Header() {
               className="flex items-center gap-2 group"
             >
               <img
-                src={user?.avatar || '/default-avatar.png'}
+                // src={user?.avatar || '/default-avatar.png'}
                 onError={(e) => e.currentTarget.src = '/default-avatar.png'}
                 alt="avatar"
                 className="w-9 h-9 rounded-full object-cover border-2 border-indigo-200 transition-transform group-hover:scale-105"
